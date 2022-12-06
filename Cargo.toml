@@ -1,7 +1,13 @@
 [package]
 name = "mut-elems"
 version = "0.1.0"
+authors = ["Bart Massey <bart.massey@gmail.com>"]
 edition = "2021"
+description = "Get simultaneous mutable access to multiple elements of a mutable array, slice or `Vec`."
+license-file = "LICENSE.txt"
+repository = "https://github.com/BartMassey/mut-elems"
+readme = "README.md"
+categories = ["rust-patterns"]
 
 [dependencies]
 thiserror = "1.0.37"
