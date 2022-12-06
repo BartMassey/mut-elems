@@ -125,3 +125,21 @@ fn test_mut_elems() {
     *es[1] = 7;
     assert_eq!([1, 5, 3, 7], test_array);
 }
+
+pub fn as_mut_elems<const N: usize, T>(target: &mut [T; N]) -> [&mut T; N] {
+    // Safety: `from_fn()` guarantees that indices `i` 
+    // are in-bounds and unique.
+    std::array::from_fn(|i| unsafe {
+        &mut *(target.get_unchecked_mut(i) as *mut T)
+    })
+}
+
+#[test]
+fn test_as_mut_elems() {
+    let mut test_array = [1u8, 2, 3, 4];
+    let es = as_mut_elems(&mut test_array);
+    assert_eq!([&1, &2, &3, &4], es);
+    *es[1] = 5;
+    *es[3] = 7;
+    assert_eq!([1, 5, 3, 7], test_array);
+}
