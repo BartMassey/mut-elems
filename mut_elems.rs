@@ -1,18 +1,47 @@
+/*!
+
+Get simultaneous mutable access to multiple elements of a
+mutable array, slice or `Vec`. This is a generalization of
+[slice::split_at_mut] to individual elements rather
+than just a pair of subslices.
+
+# Examples
+
+```
+use mut_elems::*;
+
+let mut a = [1u8, 2, 3, 4];
+    let es = a.mut_elems(&[1, 3]).unwrap();
+    *es[0] = 5;
+    *es[1] = 7;
+    assert_eq!([1, 5, 3, 7], a);
+```
+
+*/
+
 use thiserror::Error;
 
-/// Failure cases for [[mut_elems]].
+/// Failure cases for [MutElemsExt::mut_elems].
 #[derive(Error, Debug)]
 pub enum MutElemsError {
-    #[error("indices {first} and {second} are both {value}")]
+    /// There is a repeated index in the provided indices.
+    #[error("indices {first} and {second} are both {index}")]
     IndicesOverlap {
+        /// First position of repeated index in indices.
         first: usize,
+        /// Second position of repeated index in indices.
         second: usize,
-        value: usize,
+        /// Value of repeated index.
+        index: usize,
     },
-    #[error("index {position} is {value}, but target length is {length}")]
+    /// A provided index is out of bounds.
+    #[error("index {position} is {index}, but target length is {length}")]
     IndexBound {
+        /// Position of out-of-bounds index in indices.
         position: usize,
-        value: usize,
+        /// Value out-of-bounds index.
+        index: usize,
+        /// Number of elements in target: should be greater than index.
         length: usize,
     },
 }
@@ -57,7 +86,7 @@ impl<T> MutElemsExt<T> for [T] {
                     return Err(IndicesOverlap {
                         first: indices[0],
                         second: indices[1],
-                        value: indices[0],
+                        index: indices[0],
                     });
                 }
             }
@@ -72,7 +101,7 @@ impl<T> MutElemsExt<T> for [T] {
                         return Err(IndicesOverlap {
                             first: j,
                             second: i,
-                            value: *ix,
+                            index: *ix,
                         });
                     }
                     seen.insert(*ix, i);
@@ -86,7 +115,7 @@ impl<T> MutElemsExt<T> for [T] {
             if *ix >= nself {
                 return Err(IndexBound {
                     position: i,
-                    value: *ix,
+                    index: *ix,
                     length: nself,
                 });
             }
@@ -133,11 +162,11 @@ fn test_mut_elems() {
     match test_array.mut_elems(&[4]) {
         Err(MutElemsError::IndexBound {
             position,
-            value,
+            index,
             length,
         }) => {
             assert_eq!(position, 0);
-            assert_eq!(value, 4);
+            assert_eq!(index, 4);
             assert_eq!(length, 4);
         }
         _ => panic!(),
@@ -147,11 +176,11 @@ fn test_mut_elems() {
         Err(MutElemsError::IndicesOverlap {
             first,
             second,
-            value,
+            index,
         }) => {
             assert_eq!(first, 0);
             assert_eq!(second, 2);
-            assert_eq!(value, 1);
+            assert_eq!(index, 1);
         }
         _ => panic!(),
     }
