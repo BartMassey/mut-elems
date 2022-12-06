@@ -32,8 +32,14 @@ pub trait MutElemsExt<T> {
 
 pub trait AsMutElemsExt<const N: usize, T> {
     /// Return an array of mutable references to each
-    /// of the elements of the input array
+    /// of the elements of the input array.
     fn as_mut_elems(&mut self) -> [&mut T; N];
+}
+
+pub trait AsMutElemsVecExt<T> {
+    /// Return a `Vec` of mutable references to each
+    /// of the elements of the input `Vec`.
+    fn as_mut_elems(&mut self) -> Vec<&mut T>;
 }
 
 impl<T> MutElemsExt<T> for [T] {
@@ -107,6 +113,17 @@ impl<const N: usize, T> AsMutElemsExt<N, T> for [T; N] {
     }
 }
 
+impl<T> AsMutElemsVecExt<T> for Vec<T> {
+    fn as_mut_elems(&mut self) -> Vec<&mut T> {
+        // Safety: iteration guarantees that elements
+        // are in-bounds and unique.
+        self
+            .iter_mut()
+            .map(|r| unsafe { &mut *(r as *mut T) })
+            .collect()
+    }
+}
+
 #[test]
 fn test_mut_elems() {
     let mut test_array = [1u8, 2, 3, 4];
@@ -159,4 +176,14 @@ fn test_as_mut_elems() {
     *es[1] = 5;
     *es[3] = 7;
     assert_eq!([1, 5, 3, 7], test_array);
+}
+
+#[test]
+fn test_as_mut_elems_vec() {
+    let mut test_vec = vec![1u8, 2, 3, 4];
+    let mut es = test_vec.as_mut_elems();
+    assert_eq!(vec![&1, &2, &3, &4], es);
+    *es[1] = 5;
+    *es[3] = 7;
+    assert_eq!(vec![1, 5, 3, 7], test_vec);
 }
