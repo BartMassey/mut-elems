@@ -105,11 +105,9 @@ impl<T> MutElemsExt<T> for [T] {
 
 impl<const N: usize, T> AsMutElemsExt<N, T> for [T; N] {
     fn as_mut_elems(&mut self) -> [&mut T; N] {
-        // Safety: `from_fn()` guarantees that indices `i` 
+        // Safety: `from_fn()` guarantees that indices `i`
         // are in-bounds and unique.
-        std::array::from_fn(|i| unsafe {
-            &mut *(self.get_unchecked_mut(i) as *mut T)
-        })
+        std::array::from_fn(|i| unsafe { &mut *(self.get_unchecked_mut(i) as *mut T) })
     }
 }
 
@@ -117,8 +115,7 @@ impl<T> AsMutElemsVecExt<T> for Vec<T> {
     fn as_mut_elems(&mut self) -> Vec<&mut T> {
         // Safety: iteration guarantees that elements
         // are in-bounds and unique.
-        self
-            .iter_mut()
+        self.iter_mut()
             .map(|r| unsafe { &mut *(r as *mut T) })
             .collect()
     }
@@ -131,10 +128,7 @@ fn test_mut_elems() {
     assert_eq!([&1], test_array.mut_elems(&[0]).unwrap());
     assert_eq!([&4], test_array.mut_elems(&[3]).unwrap());
     assert_eq!([&2, &3], test_array.mut_elems(&[1, 2]).unwrap());
-    assert_eq!(
-        [&1, &3, &4],
-        test_array.mut_elems(&[0, 2, 3]).unwrap()
-    );
+    assert_eq!([&1, &3, &4], test_array.mut_elems(&[0, 2, 3]).unwrap());
 
     match test_array.mut_elems(&[4]) {
         Err(MutElemsError::IndexBound {
