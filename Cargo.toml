@@ -8,10 +8,17 @@ license-file = "LICENSE.txt"
 repository = "https://github.com/BartMassey/mut-elems"
 readme = "README.md"
 categories = ["rust-patterns"]
+keywords = ["borrow", "mut"]
 
 [dependencies]
 thiserror = "1.0.37"
 
+[dev-dependencies]
+version-sync = "0.9.4"
+
 [lib]
 name = "mut_elems"
 path = "mut_elems.rs"
+
+[badges.maintenance]
+status = "actively-developed"

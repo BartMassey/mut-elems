@@ -1,3 +1,5 @@
+#![doc(html_root_url = "https://docs.rs/mut-elems/0.1.0")]
+
 /*!
 
 Get simultaneous mutable access to multiple elements of a
@@ -22,7 +24,7 @@ let mut a = [1u8, 2, 3, 4];
 use thiserror::Error;
 
 /// Failure cases for [MutElemsExt::mut_elems].
-#[derive(Error, Debug)]
+#[derive(Error, Debug, Clone, PartialEq, Eq, Hash)]
 pub enum MutElemsError {
     /// There is a repeated index in the provided indices.
     #[error("indices {first} and {second} are both {index}")]
@@ -53,6 +55,11 @@ pub trait MutElemsExt<T> {
     ///
     /// All indices must be unique, as Rust does not allow
     /// multiple mutable references to the same object.
+    ///
+    /// # Errors
+    ///
+    /// Will return an error if any of the indices are out of bounds,
+    /// or if any pair of indices is identical.
     fn mut_elems<'a, const N: usize>(
         &'a mut self,
         indices: &[usize; N],
