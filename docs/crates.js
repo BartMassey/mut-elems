@@ -1,1 +1,0 @@
-window.ALL_CRATES = ["mut_elems","proc_macro2","quote","syn","thiserror","thiserror_impl","unicode_ident"];
