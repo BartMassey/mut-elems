@@ -14,12 +14,18 @@ use mut_elems::*;
 
 let mut a = [1u8, 2, 3, 4];
 
-let es = a.mut_elems(&[1, 3]).unwrap();
+let es: [&mut u8; 2] = a.mut_elems(&[1, 3]).unwrap();
 *es[0] = 5;
 *es[1] = 7;
 assert_eq!([1, 5, 3, 7], a);
 
-let es = a.as_mut_elems();
+let es: [&mut u8; 4] = a.as_mut_elems();
+*es[1] = 5;
+*es[3] = 7;
+assert_eq!([1, 5, 3, 7], a);
+
+let mut aref: &mut [u8] = a.as_mut();
+let mut es: Vec<&mut u8> = aref.as_mut_elems_vec();
 *es[1] = 5;
 *es[3] = 7;
 assert_eq!([1, 5, 3, 7], a);
@@ -81,7 +87,7 @@ pub trait AsMutElemsExt<const N: usize, T> {
 pub trait AsMutElemsVecExt<T> {
     /// Return a `Vec` of mutable references to each
     /// of the elements of the input `Vec`.
-    fn as_mut_elems(&mut self) -> Vec<&mut T>;
+    fn as_mut_elems_vec(&mut self) -> Vec<&mut T>;
 }
 
 impl<T> MutElemsExt<T> for [T] {
@@ -153,11 +159,11 @@ impl<const N: usize, T> AsMutElemsExt<N, T> for [T; N] {
     }
 }
 
-impl<T> AsMutElemsVecExt<T> for Vec<T> {
-    fn as_mut_elems(&mut self) -> Vec<&mut T> {
+impl<T, V> AsMutElemsVecExt<T> for V where V: AsMut<[T]> {
+    fn as_mut_elems_vec(&mut self) -> Vec<&mut T> {
         // Safety: iteration guarantees that elements
         // are in-bounds and unique.
-        self.iter_mut()
+        self.as_mut().iter_mut()
             .map(|r| unsafe { &mut *(r as *mut T) })
             .collect()
     }
@@ -217,7 +223,7 @@ fn test_as_mut_elems() {
 #[test]
 fn test_as_mut_elems_vec() {
     let mut test_vec = vec![1u8, 2, 3, 4];
-    let mut es = test_vec.as_mut_elems();
+    let mut es = test_vec.as_mut_elems_vec();
     assert_eq!(vec![&1, &2, &3, &4], es);
     *es[1] = 5;
     *es[3] = 7;
