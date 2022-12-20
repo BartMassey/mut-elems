@@ -13,10 +13,16 @@ than just a pair of subslices.
 use mut_elems::*;
 
 let mut a = [1u8, 2, 3, 4];
-    let es = a.mut_elems(&[1, 3]).unwrap();
-    *es[0] = 5;
-    *es[1] = 7;
-    assert_eq!([1, 5, 3, 7], a);
+
+let es = a.mut_elems(&[1, 3]).unwrap();
+*es[0] = 5;
+*es[1] = 7;
+assert_eq!([1, 5, 3, 7], a);
+
+let es = a.as_mut_elems();
+*es[1] = 5;
+*es[3] = 7;
+assert_eq!([1, 5, 3, 7], a);
 ```
 
 */
