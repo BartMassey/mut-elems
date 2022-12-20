@@ -8,6 +8,8 @@ Bart Massey 2022 (version {{version}})
 
 {{readme}}
 
+[API docs](https://bartmassey.github.io/mut-elems) are available.
+
 # License
 
 This crate is made available under the "MIT license". Please

@@ -37,6 +37,8 @@ assert_eq!([1, 5, 3, 7], a);
 ```
 
 
+[API docs](https://bartmassey.github.io/mut-elems) are available.
+
 # License
 
 This crate is made available under the "MIT license". Please
