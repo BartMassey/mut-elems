@@ -9,8 +9,10 @@ Bart Massey 2022 (version 0.1.0)
 
 Get simultaneous mutable access to multiple elements of a
 mutable array, slice or `Vec`. This is a generalization of
-[slice::split_at_mut] to individual elements rather
-than just a pair of subslices.
+[slice::split_at_mut] to individual elements rather than
+just a pair of
+subslices. [API docs](https://bartmassey.github.io/mut-elems/)
+are available.
 
 ## Examples
 
