@@ -1,6 +1,6 @@
 [package]
 name = "mut-elems"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Bart Massey <bart.massey@gmail.com>"]
 edition = "2021"
 description = "Get simultaneous mutable access to multiple elements of a mutable array, slice or `Vec`."
